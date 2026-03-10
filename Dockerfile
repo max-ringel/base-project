@@ -65,6 +65,15 @@ RUN if [ "${INSTALL_CLAUDE_CODE}" = "true" ]; then \
     && ln -s /root/.local/bin/claude /usr/local/bin/claude; \
     fi
 
+RUN if [ "$INSTALL_PYTHON3" = "true" ]; then \
+    apt update && apt install -y \
+    python3 \
+    python3-pip \
+    python3-venv \
+    python-is-python3 \
+    && pip install --break-system-packages pynvim \
+    && rm -rf /var/lib/apt/lists/*; \
+    fi
 
 WORKDIR /app
 
