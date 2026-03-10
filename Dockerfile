@@ -60,6 +60,12 @@ RUN if [ "${INSTALL_NODEJS}" = "true" ]; then \
     && npm install -g tree-sitter-cli; \
     fi
 
+RUN if [ "${INSTALL_CLAUDE_CODE}" = "true" ]; then \
+    curl -fsSL https://claude.ai/install.sh | bash \
+    && ln -s /root/.local/bin/claude /usr/local/bin/claude; \
+    fi
+
+
 WORKDIR /app
 
 CMD ["tail", "-f", "/dev/null"]
