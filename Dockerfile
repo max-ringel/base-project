@@ -6,6 +6,8 @@ ARG INSTALL_CLAUDE_CODE
 ARG INSTALL_PYTHON3
 ARG INSTALL_NODEJS
 
+ARG NVIM_CONFIG_REPOSITORY
+
 ENV NVM_DIR=/root/.nvm
 ENV NODE_VERSION=24
 ENV XDG_CONFIG_HOME=/root/.config
@@ -39,7 +41,7 @@ RUN set -ex; \
     rm "nvim-linux-$NVIM_ARCH.tar.gz"; \
     ln -s /opt/nvim-linux-$NVIM_ARCH/bin/nvim /usr/local/bin/nvim;
 
-RUN git clone https://github.com/max-ringel/kickstart.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
+RUN git clone "${NVIM_CONFIG_REPOSITORY}" "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
 
 RUN if [ "${INSTALL_NODEJS}" = "true" ]; then \
     mkdir -p $NVM_DIR \
@@ -76,5 +78,9 @@ RUN if [ "$INSTALL_PYTHON3" = "true" ]; then \
     fi
 
 WORKDIR /app
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["tail", "-f", "/dev/null"]
