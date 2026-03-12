@@ -22,10 +22,36 @@ RUN apt update && apt install -y \
     fd-find \
     xclip \
     unzip \
+    eza \
+    fzf \
     && rm -rf /var/lib/apt/lists/*
 
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended
 RUN ln -s $(which fdfind) /usr/local/bin/fd
+
+# Oh My Zsh plugins and theme
+RUN git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions \
+    && git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting \
+    && git clone https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k \
+    && sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/' ~/.zshrc \
+    && sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' ~/.zshrc
+
+# Powerlevel10k configuration
+COPY p10k.zsh /root/.p10k.zsh
+RUN echo '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >> ~/.zshrc
+
+# eza setup
+RUN echo 'alias ls="eza --icons"' >> ~/.zshrc \
+    && echo 'alias ll="eza --icons -la"' >> ~/.zshrc \
+    && echo 'alias lt="eza --icons --tree --level=2"' >> ~/.zshrc
+
+# zoxide setup
+RUN curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh -s -- --bin-dir /opt/zoxide \
+    && ln -s /opt/zoxide/zoxide /usr/local/bin/zoxide
+RUN echo 'eval "$(zoxide init zsh)"' >> ~/.zshrc
+
+# fzf setup
+RUN echo 'source <(fzf --zsh)' >> ~/.zshrc
 
 RUN set -ex; \
     if [ "$TARGETARCH" = "amd64" ]; then \
