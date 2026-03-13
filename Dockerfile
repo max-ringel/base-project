@@ -67,8 +67,6 @@ RUN set -ex; \
     rm "nvim-linux-$NVIM_ARCH.tar.gz"; \
     ln -s /opt/nvim-linux-$NVIM_ARCH/bin/nvim /usr/local/bin/nvim;
 
-RUN git clone "${NVIM_CONFIG_REPOSITORY}" "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
-
 RUN if [ "${INSTALL_NODEJS}" = "true" ]; then \
     mkdir -p $NVM_DIR \
     && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash \
@@ -102,6 +100,9 @@ RUN if [ "$INSTALL_PYTHON3" = "true" ]; then \
     && pip install --break-system-packages pynvim \
     && rm -rf /var/lib/apt/lists/*; \
     fi
+
+ARG CACHEBUST=1
+RUN git clone "${NVIM_CONFIG_REPOSITORY}" "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
 
 WORKDIR /app
 
