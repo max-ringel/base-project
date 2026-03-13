@@ -90,7 +90,7 @@ RUN if [ "${INSTALL_NODEJS}" = "true" ]; then \
 
 RUN if [ "${INSTALL_CLAUDE_CODE}" = "true" ]; then \
     curl -fsSL https://claude.ai/install.sh | bash \
-    && ln -s /root/.local/bin/claude /usr/local/bin/claude; \
+    && echo 'export PATH="$HOME/.local/bin:$PATH"' >> /root/.zshrc; \
     fi
 
 RUN if [ "$INSTALL_PYTHON3" = "true" ]; then \
