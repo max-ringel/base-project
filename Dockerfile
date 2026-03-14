@@ -24,6 +24,9 @@ RUN apt update && apt install -y \
     unzip \
     eza \
     fzf \
+    chafa \
+    timg \
+    poppler-utils \
     && rm -rf /var/lib/apt/lists/*
 
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended
@@ -98,8 +101,12 @@ RUN if [ "$INSTALL_PYTHON3" = "true" ]; then \
     python3-venv \
     python-is-python3 \
     && pip install --break-system-packages pynvim \
-    && rm -rf /var/lib/apt/lists/*; \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install --break-system-packages kitcat; \
     fi
+
+# Set the Matplotlib backend to kitty for rendering plots in the terminal
+ENV MPLBACKEND=kitcat
 
 ARG CACHEBUST=1
 RUN git clone "${NVIM_CONFIG_REPOSITORY}" "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
