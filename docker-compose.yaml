@@ -6,6 +6,8 @@ services:
         - NVIM_CONFIG_REPOSITORY=${NVIM_CONFIG_REPOSITORY}
     volumes:
       - ./app:/app
+      - ./.config/claude-config:/root/.claude
+      - ./.config/github-copilot-config:/root/.config/github-copilot
     stdin_open: true
     tty: true
     environment:
